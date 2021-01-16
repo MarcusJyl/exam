@@ -13,6 +13,7 @@ import java.util.Date;
  * @author Marcus
  */
 public class BookDTO {
+    private Long id;
     private String isbn;
     private String title;
     private String authors;
@@ -20,12 +21,22 @@ public class BookDTO {
     private String publishYear;
 
     public BookDTO(Book book) {
+        this.id = book.getId();
         this.isbn = book.getIsbn();
         this.title = book.getTitle();
         this.authors = book.getAuthors();
-        this.publishers = book.getAuthors();
+        this.publishers = book.getPublisher();
         this.publishYear = book.getPublishYear();
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
 
     public String getIsbn() {
         return isbn;
