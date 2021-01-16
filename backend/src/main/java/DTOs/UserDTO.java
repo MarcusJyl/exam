@@ -6,7 +6,6 @@
 package DTOs;
 
 import entities.User;
-import entities.UserInfo;
 import java.util.List;
 
 /**
@@ -18,9 +17,9 @@ public class UserDTO {
     private String username;
     private String password;
     private List<String> roles;
-    private String fname;
 
-    public UserDTO(String name, String password, List<String> roles, UserInfo fname ) {
+
+    public UserDTO(String name, String password, List<String> roles ) {
         this.username = name;
         this.roles = roles;
         this.password = password;
@@ -30,17 +29,9 @@ public class UserDTO {
     public UserDTO(User user) {
         this.username = user.getUserName();
         this.roles = user.getRolesAsStrings();
-        this.fname = user.getUserinfo().getName();
+        
     }
 
-    public String getFname() {
-        return fname;
-    }
-
-    public void setFname(String fname) {
-        this.fname = fname;
-    }
-    
     public String getName() {
         return username;
     }

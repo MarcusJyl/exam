@@ -1,9 +1,14 @@
 package facades;
 
+import DTOs.BookDTO;
+import entities.Book;
 import utils.EMF_Creator;
 import entities.RenameMe;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
+import org.hamcrest.beans.SamePropertyValuesAs;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +21,8 @@ import org.junit.jupiter.api.Test;
 public class FacadeExampleTest {
 
     private static EntityManagerFactory emf;
-    private static FacadeExample facade;
+    private static BookFacade facade;
+    private static Book b1, b2, b3;
 
     public FacadeExampleTest() {
     }
@@ -24,9 +30,9 @@ public class FacadeExampleTest {
     @BeforeAll
     public static void setUpClass() {
        emf = EMF_Creator.createEntityManagerFactoryForTest();
-       facade = FacadeExample.getFacadeExample(emf);
+       facade = BookFacade.getFacadeExample(emf);
     }
-
+    
     @AfterAll
     public static void tearDownClass() {
 //        Clean up database after test is done or use a persistence unit with drop-and-create to start up clean on every test
@@ -37,12 +43,14 @@ public class FacadeExampleTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
+        
         try {
             em.getTransaction().begin();
             em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
-            em.persist(new RenameMe("Some txt", "More text"));
-            em.persist(new RenameMe("aaa", "bbb"));
-
+            em.persist(b1 = new Book("12312", "harry potter", "Gwenyth paltrow", "egmont", "1999"));
+            em.persist(b2 = new Book("8347", "harry potter2", "Gwenyth paltrow", "egmont", "1998"));
+            em.persist(b3 = new Book("1231", "harry potter3", "Gwenyth paltrow", "egmont", "1997"));
+        
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -53,11 +61,18 @@ public class FacadeExampleTest {
     public void tearDown() {
 //        Remove any data after each test was run
     }
+    
 
-    // TODO: Delete or change this method 
     @Test
-    public void testAFacadeMethod() {
-        assertEquals(2, facade.getRenameMeCount(), "Expects two rows in the database");
+    public void testDeleteBook() throws Exception{
+        long id = b2.getId();
+        BookFacade instance = BookFacade.getFacadeExample(emf);
+        BookDTO expected = new BookDTO(b2);
+        BookDTO result = instance.deleteBook(id);
+        assertThat(expected, samePropertyValuesAs(result));
     }
+    
+  
+    
 
 }

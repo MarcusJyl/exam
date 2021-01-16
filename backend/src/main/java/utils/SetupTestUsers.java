@@ -1,10 +1,11 @@
 package utils;
 
 
-import DTOs.UserInfoDTO;
+
+import entities.Book;
 import entities.Role;
 import entities.User;
-import entities.UserInfo;
+
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -26,6 +27,10 @@ public class SetupTestUsers {
     User admin = new User("admin", "test2");
     User both = new User("user_admin", "test2");
    
+    Book bog1 = new Book("1234", "HArry Potter 1", "gwenyth palthrow","egmont", "1999");
+    Book bog2 = new Book("183", "HArry Potter 2", "gwenyth palthrow", "egmont", "1212");
+    Book bog3 = new Book("123", "HArry Potter 3", "gwenyth palthrow", "egmont", "1313");
+    Book bog4 = new Book("12346", "HArry Potter 4", "gwenyth palthrow","egmont", "1234");
     
 
     if(admin.getUserPass().equals("test")||user.getUserPass().equals("test")||both.getUserPass().equals("test"))
@@ -34,9 +39,7 @@ public class SetupTestUsers {
     em.getTransaction().begin();
 
     
-    UserInfo userInfo = new UserInfo().setInfo(new UserInfoDTO("per"));
-    UserInfo userInfo2 = new UserInfo().setInfo(new UserInfoDTO("Jurgen"));
-    UserInfo userInfo3 = new UserInfo().setInfo(new UserInfoDTO("mogens"));
+    
     Role userRole = new Role("user");
     Role adminRole = new Role("admin");
     
@@ -45,15 +48,13 @@ public class SetupTestUsers {
     admin.addRole(adminRole);
     both.addRole(userRole);
     both.addRole(adminRole);
-    user.setUserinfo(userInfo);
-    admin.setUserinfo(userInfo2);
-    both.setUserinfo(userInfo3);
-    
+   
     em.persist(userRole);
     em.persist(adminRole);
-    em.persist(userInfo);
-    em.persist(userInfo2);
-    em.persist(userInfo3);
+    em.persist(bog1);
+    em.persist(bog2);
+    em.persist(bog3);
+    em.persist(bog4);
     em.persist(user);
     em.persist(admin);
     em.persist(both);

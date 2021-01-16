@@ -37,8 +37,7 @@ public class User implements Serializable {
     @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
   @ManyToMany
   private List<Role> roleList = new ArrayList<>();
-  @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
-  private UserInfo userinfo = null;
+
 
   public List<String> getRolesAsStrings() {
     if (roleList.isEmpty()) {
@@ -65,15 +64,6 @@ public class User implements Serializable {
 
     this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
   }
-
-    public UserInfo getUserinfo() {
-        return userinfo;
-    }
-
-    public void setUserinfo(UserInfo userInfo) {
-        this.userinfo = userinfo;
-        userInfo.setUser(this);
-    }
 
   
   public String getUserName() {

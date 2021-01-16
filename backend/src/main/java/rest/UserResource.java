@@ -6,12 +6,12 @@
 package rest;
 
 import DTOs.UserDTO;
-import DTOs.UserInfoDTO;
+
 import DTOs.UsersDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import entities.User;
-import entities.UserInfo;
+
 import errorhandling.InvalidInputException;
 import facades.UserFacade;
 import java.util.ArrayList;
@@ -67,57 +67,4 @@ public class UserResource {
         return GSON.toJson(userDTO);
     }
 
-    @POST
-    @Path("info")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"admin", "user"})
-    public String makeUserInfo(String userInfoString) throws InvalidInputException {
-        String thisuser = securityContext.getUserPrincipal().getName();
-        UserInfoDTO userInfoDTO = GSON.fromJson(userInfoString, UserInfoDTO.class);
-        EntityManager em = EMF.createEntityManager();
-        System.out.println(userInfoString);
-        User user = null;
-
-        try {
-            TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.userName = :userName", User.class);
-            query.setParameter("userName", thisuser);
-            user = query.getSingleResult();
-            UserInfo userInfo = user.getUserinfo();
-
-            if (userInfo == null) {
-                userInfo = new UserInfo();
-                user.setUserinfo(userInfo);
-            }
-
-            userInfo.setInfo(userInfoDTO);
-            em.getTransaction().begin();
-            em.persist(user);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-
-        }
-
-        return GSON.toJson(new UserDTO(user));
-    }
-
-    @GET
-    @Path("info")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"admin", "user"})
-    public String getUserInfo() throws InvalidInputException {
-        EntityManager em = EMF.createEntityManager();
-        String name = securityContext.getUserPrincipal().getName();
-            TypedQuery<User> query = em.createQuery("SELECT u FROM User u ", User.class);
-
-            List<User> users = query.getResultList();
-            UsersDTO usersDTO = new UsersDTO(users);
-            return GSON.toJson(usersDTO);
-//        try {
-//            
-//        } catch (Exception e) {
-//           // throw new InvalidInputException(String.format("Could not find a user with your name (%s)", name));
-//        }return "pis";
-    }
 }

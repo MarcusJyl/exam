@@ -1,13 +1,12 @@
 package rest;
 
 import DTOs.UserDTO;
-import DTOs.UserInfoDTO;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import entities.User;
-import entities.UserInfo;
 import errorhandling.InvalidInputException;
 import facades.UserFacade;
 import java.util.ArrayList;
