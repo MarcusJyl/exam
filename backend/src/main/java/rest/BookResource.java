@@ -16,6 +16,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import entities.Book;
 import entities.User;
+import errorhandling.MissingInputException;
+import errorhandling.NotFoundException;
 import facades.BookFacade;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
@@ -74,7 +76,7 @@ public class BookResource {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed("admin")
-    public String deleteBook(@PathParam("id") Long id) {
+    public String deleteBook(@PathParam("id") Long id) throws NotFoundException {
         BookDTO bDelete = FACADE.deleteBook(id);
         return GSON.toJson(bDelete);
     }
@@ -83,7 +85,7 @@ public class BookResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @RolesAllowed("admin")
-    public String addBook(String book) {
+    public String addBook(String book) throws MissingInputException {
         BookDTO b = GSON.fromJson(book, BookDTO.class);
         BookDTO bNew = FACADE.addBook(b.getIsbn(), b.getTitle(), b.getAuthors(), b.getPublishers(), b.getPublishYear());
         return GSON.toJson(bNew);
@@ -93,7 +95,7 @@ public class BookResource {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    public String editBook(@PathParam("id")Long id, String book){
+    public String editBook(@PathParam("id")Long id, String book) throws NotFoundException, MissingInputException{
         BookDTO bDTO = GSON.fromJson(book, BookDTO.class);
         bDTO.setId(id);
        BookDTO bNew = FACADE.editBook(bDTO);

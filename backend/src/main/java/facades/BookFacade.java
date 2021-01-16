@@ -3,12 +3,10 @@ package facades;
 import DTOs.BookDTO;
 import DTOs.BooksDTO;
 import entities.Book;
-import entities.RenameMe;
-import java.util.List;
+import errorhandling.MissingInputException;
+import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
 
 /**
  *
@@ -49,21 +47,29 @@ public class BookFacade {
         }
     }
 
-    public BookDTO deleteBook(Long id) {
+    public BookDTO deleteBook(Long id) throws NotFoundException {
         EntityManager em = getEntityManager();
         Book book = em.find(Book.class, id);
-
-        try {
-            em.getTransaction().begin();
-            em.remove(book);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
+        if (book == null) {
+            throw new NotFoundException("Book not found");
+        }else{
+            try {
+                em.getTransaction().begin();
+                em.remove(book);
+                em.getTransaction().commit();
+            } finally {
+                em.close();
+            }
+            return new BookDTO(book);
         }
-        return new BookDTO(book);
     }
 
-    public BookDTO addBook(String isbn, String title, String author, String publisher, String publishYear) {
+    
+
+    public BookDTO addBook(String isbn, String title, String author, String publisher, String publishYear) throws MissingInputException {
+        if ((isbn.length() == 0) || (title.length() == 0) || (author.length() == 0) || (publisher.length() == 0) || (publishYear.length() == 0)) {
+            throw new MissingInputException("some inputs are missing");
+        }
         EntityManager em = getEntityManager();
         Book book = new Book(isbn, title, author, publisher, publishYear);
 
@@ -78,20 +84,28 @@ public class BookFacade {
         return new BookDTO(book);
     }
 
-    public BookDTO editBook(BookDTO b) {
+    public BookDTO editBook(BookDTO b) throws NotFoundException, MissingInputException {
+        if ((b.getIsbn().length() == 0) || (b.getTitle().length() == 0) || (b.getAuthors().length() == 0) || (b.getPublishers().length() == 0) || (b.getPublishYear().length() == 0)) {
+            throw new MissingInputException("some inputs are missing");
+        }
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             Book book = em.find(Book.class, b.getId());
-            book.setIsbn(b.getIsbn());
-            book.setTitle(b.getTitle());
-            book.setAuthors(b.getAuthors());
-            book.setPublisher(b.getAuthors());
-            book.setPublishYear(b.getPublishYear());
-            em.merge(book);
+            if (book == null) {
+                throw new NotFoundException("Book not found");
+
+            } else {
+                book.setIsbn(b.getIsbn());
+                book.setTitle(b.getTitle());
+                book.setAuthors(b.getAuthors());
+                book.setPublisher(b.getAuthors());
+                book.setPublishYear(b.getPublishYear());
+                em.merge(book);
+            }
             em.getTransaction().commit();
             return new BookDTO(book);
-        }finally{
+        } finally {
             em.close();
         }
     }

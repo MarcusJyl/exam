@@ -5,6 +5,8 @@ import DTOs.BooksDTO;
 import entities.Book;
 import utils.EMF_Creator;
 import entities.RenameMe;
+import errorhandling.MissingInputException;
+import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -74,7 +76,7 @@ public class FacadeExampleTest {
     }
 
     @Test
-    public void testAddBook() {
+    public void testAddBook() throws MissingInputException {
         String isbn = "123456789";
         String title = "harry Potter";
         String authors = "hans";
@@ -98,7 +100,7 @@ public class FacadeExampleTest {
     }
 
     @Test
-    public void testEditBook() {
+    public void testEditBook() throws NotFoundException, MissingInputException {
         BookDTO b = new BookDTO(b1);
         BookFacade instance = BookFacade.getFacadeExample(emf);
         BookDTO expected = new BookDTO(b1);
